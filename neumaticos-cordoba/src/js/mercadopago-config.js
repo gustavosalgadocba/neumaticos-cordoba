@@ -1,13 +1,16 @@
 // Configuración de Mercado Pago
 const mercadoPagoConfig = {
-    // La Public Key se obtendrá del servidor
-    publicKey: '',
+    publicKey: null,
+    mp: null
 };
 
 // Función para obtener la Public Key del servidor
 async function getPublicKey() {
     try {
         const response = await fetch('/config');
+        if (!response.ok) {
+            throw new Error('Error al obtener la configuración');
+        }
         const config = await response.json();
         return config.publicKey;
     } catch (error) {
@@ -19,20 +22,37 @@ async function getPublicKey() {
 // Función para inicializar Mercado Pago
 async function initMercadoPago() {
     try {
-        // Obtener la Public Key del servidor
-        mercadoPagoConfig.publicKey = await getPublicKey();
+        if (!mercadoPagoConfig.publicKey) {
+            mercadoPagoConfig.publicKey = await getPublicKey();
+        }
 
-        const script = document.createElement('script');
-        script.src = "https://sdk.mercadopago.com/js/v2";
-        script.type = "text/javascript";
-        document.body.appendChild(script);
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = "https://sdk.mercadopago.com/js/v2";
+            script.type = "text/javascript";
+            
+            script.onload = () => {
+                try {
+                    mercadoPagoConfig.mp = new MercadoPago(mercadoPagoConfig.publicKey, {
+                        locale: 'es-AR'
+                    });
+                    resolve(mercadoPagoConfig.mp);
+                } catch (error) {
+                    console.error('Error al inicializar MercadoPago:', error);
+                    reject(error);
+                }
+            };
 
-        script.onload = () => {
-            window.mp = new MercadoPago(mercadoPagoConfig.publicKey);
-        };
+            script.onerror = (error) => {
+                console.error('Error al cargar el script de MercadoPago:', error);
+                reject(error);
+            };
+
+            document.body.appendChild(script);
+        });
     } catch (error) {
-        console.error('Error al inicializar Mercado Pago:', error);
-        alert('Error al inicializar el sistema de pagos. Por favor, recarga la página.');
+        console.error('Error en initMercadoPago:', error);
+        throw error;
     }
 }
 
@@ -48,10 +68,14 @@ function cleanPrice(price) {
 // Función para procesar el pago
 async function processPayment(cart) {
     try {
+        if (!mercadoPagoConfig.mp) {
+            await initMercadoPago();
+        }
+
         // Formatear items para Mercado Pago
         const items = cart.map(item => ({
             title: item.brand ? `${item.brand} ${item.name}` : item.name,
-            unit_price: Number(item.price.toString().replace(/[^\d]/g, '')),
+            unit_price: cleanPrice(item.price),
             quantity: Number(item.quantity) || 1,
             currency_id: "ARS"
         }));
@@ -68,7 +92,8 @@ async function processPayment(cart) {
         });
 
         if (!response.ok) {
-            throw new Error('Error al crear la preferencia de pago');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error al crear la preferencia de pago');
         }
 
         const preference = await response.json();
@@ -76,19 +101,44 @@ async function processPayment(cart) {
 
         // Limpiar contenedor anterior si existe
         const container = document.getElementById('mercadopago-wallet');
+        if (!container) {
+            throw new Error('No se encontró el contenedor para el botón de pago');
+        }
         container.innerHTML = '';
 
         // Crear botón de pago
-        const bricksBuilder = window.mp.bricks();
+        const bricksBuilder = mercadoPagoConfig.mp.bricks();
         
-        await bricksBuilder.create("wallet", "mercadopago-wallet", {
+        const renderComponent = await bricksBuilder.create("wallet", "mercadopago-wallet", {
             initialization: {
                 preferenceId: preference.id
+            },
+            callbacks: {
+                onError: (error) => {
+                    console.error('Error en el componente de Mercado Pago:', error);
+                    alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
+                },
+                onReady: () => {
+                    console.log('Botón de pago listo');
+                }
             }
         });
+
+        return renderComponent;
     } catch (error) {
         console.error('Error al procesar el pago:', error);
-        alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
+        const container = document.getElementById('mercadopago-wallet');
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message">
+                    <p>Hubo un error al cargar el método de pago.</p>
+                    <button onclick="window.mercadoPagoHandler.processPayment(${JSON.stringify(cart)})">
+                        Reintentar
+                    </button>
+                </div>
+            `;
+        }
+        throw error;
     }
 }
 
