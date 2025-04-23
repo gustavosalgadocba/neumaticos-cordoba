@@ -9,7 +9,9 @@ app.use(express.json());
 app.use(cors());
 
 // Configurar Mercado Pago con el Access Token desde .env
-const client = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN });
+const client = new MercadoPagoConfig({ 
+    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN 
+});
 
 // Servir archivos estáticos desde la carpeta neumaticos-cordoba/src
 app.use('/src', express.static(path.join(__dirname, 'neumaticos-cordoba/src')));
@@ -51,11 +53,11 @@ app.post('/create-preference', async (req, res) => {
                 installments: 12
             },
             back_urls: {
-                success: "http://localhost:3000/success.html",
-                failure: "http://localhost:3000/failure.html",
-                pending: "http://localhost:3000/pending.html"
+                success: "https://neumaticos-cordoba.onrender.com/success.html",
+                failure: "https://neumaticos-cordoba.onrender.com/failure.html",
+                pending: "https://neumaticos-cordoba.onrender.com/pending.html"
             },
-            notification_url: "http://localhost:3000/webhook"
+            notification_url: "https://neumaticos-cordoba.onrender.com/webhook"
         };
 
         console.log('Preferencia a enviar:', JSON.stringify(preferenceData, null, 2));
