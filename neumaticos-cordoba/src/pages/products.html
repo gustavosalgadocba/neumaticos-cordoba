@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumáticos Córdoba - Neumaticos</title>
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../images/logo.png" width="120px" height="70" class="logo-img" alt="Neumáticos Córdoba Logo">
+            </div>
+            <ul>
+                <li><a href="../../index.html">Inicio</a></li>
+                <li><a href="products.html">Neumáticos</a></li>
+                <li><a href="accessories.html">Accesorios</a></li>
+                <li><a href="about.html">Nosotros</a></li>
+                <li><a href="contact.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Los mejores neumáticos para tu vehículo</h2>
+                <h3>Encuentra las mejores marcas y precios en Córdoba</h3>
+                <a href="../pages/accessories.html" class="cta-button">Ver Accesorios</a>
+            </div>
+        </section>
+
+        <section class="products-section">
+            <h1>Nuestros Productos</h1>
+
+            <div class="filters">
+                <select id="brand-filter">
+                    <option value="">Todas las marcas</option>
+                </select>
+                <select id="size-filter">
+                    <option value="">Todos los tamaños</option>
+                </select>
+                <select id="price-filter">
+                    <option value="">Ordenar por precio</option>
+                    <option value="low-high">Menor a mayor</option>
+                    <option value="high-low">Mayor a menor</option>
+                </select>
+            </div>
+
+            <div class="product-grid" id="products-container">
+                <!-- Ejemplo de estructura de tarjeta de producto -->
+                <div class="product-card">
+                    <img src="../img/producto1.jpg" alt="Neumático">
+                    <div class="product-info">
+                        <h3>BFGoodrich</h3>
+                        <p class="product-model">All-Terrain T/A KO2</p>
+                        <p class="product-size">265/70R17</p>
+                        <p class="product-price">$50.000</p>
+                        <button class="details-button">Ver Detalles</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="../img/producto1.jpg" alt="Neumático">
+                    <div class="product-info">
+                        <h3 class="brand">Pirelli</h3>
+                        <p class="product-model">P Zero</p>
+                        <div class="product-specs">
+                            <p class="product-size">205/55R16</p>
+                            <p class="product-type">Temporada: Verano</p>
+                            <p class="load-index">Índice de carga: 91</p>
+                            <p class="speed-rating">Índice de velocidad: V</p>
+                        </div>
+                        <p class="product-price">$228.936</p>
+                        <button class="details-button">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Neumáticos Córdoba - Todos los derechos reservados</p>
+    </footer>
+
+    <div id="cart-widget" class="cart-widget">
+        <div class="cart-icon">
+            🛒 <span id="cart-count">0</span>
+        </div>
+        <div class="cart-content">
+            <h3>Carrito de Compras</h3>
+            <div id="cart-items-widget"></div>
+            <div class="cart-total">
+                Total: <span id="cart-total">$0</span>
+            </div>
+            <button onclick="window.location.href='cart.html'" class="view-cart-btn">Ver Carrito</button>
+        </div>
+    </div>
+
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="product-detail-grid">
+                    <div class="product-image">
+                        <img src="" alt="Neumático" id="modal-image">
+                    </div>
+                    <div class="product-info-detail">
+                        <h2 id="modal-title"></h2>
+                        <div class="product-metadata">
+                            <div class="metadata-item">
+                                <span class="label">Marca:</span>
+                                <span id="modal-brand"></span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="label">Modelo:</span>
+                                <span id="modal-model"></span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="label">Tamaño:</span>
+                                <span id="modal-size"></span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="label">Categoría:</span>
+                                <span id="modal-category"></span>
+                            </div>
+                        </div>
+                        <div class="product-price-section">
+                            <span id="modal-price" class="price"></span>
+                            <span id="modal-stock" class="stock"></span>
+                        </div>
+                        <div class="product-description">
+                            <h3>Descripción</h3>
+                            <p id="modal-description"></p>
+                        </div>
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" id="decrease">-</button>
+                            <input type="number" id="quantity" value="1" min="1">
+                            <button class="quantity-btn" id="increase">+</button>
+                            <span id="stock-available"></span>
+                        </div>
+                        <button class="add-to-cart-btn">Agregar al carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/products.js"></script>
+    <script src="../js/cart-widget.js"></script>
+    <script src="../js/hamburger.js"></script>
+</body>
+
+</html>

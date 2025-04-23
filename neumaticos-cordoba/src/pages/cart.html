@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumáticos Córdoba - Carrito</title>
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../images/logo.png" width="120px" height="70" class="logo-img" alt="Neumáticos Córdoba Logo">
+            </div>
+            <ul>
+                <li><a href="../../index.html">Inicio</a></li>
+                <li><a href="products.html">Neumáticos</a></li>
+                <li><a href="accessories.html">Accesorios</a></li>
+                <li><a href="about.html">Nosotros</a></li>
+                <li><a href="contact.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="cart-section">
+            <h2>Tu Carrito de Compras</h2>
+            
+            <div id="cart-items">
+                <!-- Los items del carrito se cargarán dinámicamente -->
+            </div>
+
+            <div class="cart-summary">
+                <div class="subtotal">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-amount">$0.00</span>
+                </div>
+                <div class="total">
+                    <span>Total:</span>
+                    <span id="total-amount">$0.00</span>
+                </div>
+                
+                <!-- Contenedor para el botón de Mercado Pago -->
+                <div id="mercadopago-wallet"></div>
+                
+                <button id="checkout-button" class="checkout-btn">Proceder al Pago</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Neumáticos Córdoba - Todos los derechos reservados</p>
+    </footer>
+
+    <script src="../js/mercadopago-config.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/cart-widget.js"></script>
+    <script src="../js/hamburger.js"></script>
+    <script>
+        // Inicializar Mercado Pago cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            window.mercadoPagoHandler.initMercadoPago();
+        });
+
+        // Manejar el clic en el botón de checkout
+        document.getElementById('checkout-button').addEventListener('click', async () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+            
+            try {
+                await window.mercadoPagoHandler.processPayment(cart);
+                // Ocultar el botón de checkout una vez que se muestra el de Mercado Pago
+                document.getElementById('checkout-button').style.display = 'none';
+            } catch (error) {
+                console.error('Error al iniciar el pago:', error);
+                alert('Hubo un error al iniciar el proceso de pago. Por favor, intente nuevamente.');
+            }
+        });
+    </script>
+</body>
+</html>

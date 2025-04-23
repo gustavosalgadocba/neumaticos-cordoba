@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumáticos Córdoba - Inicio</title>
+    <link rel="stylesheet" href="src/css/normalize.css">
+    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <!-- <h1>Neumáticos Córdoba</h1> -->
+                <img src="src/images/logo.png" width="120px" height="70" class="logo-img" alt="Neumáticos Córdoba Logo">
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="src/pages/products.html">Neumáticos</a></li>
+                <li><a href="src/pages/accessories.html">Accesorios</a></li>
+                <li><a href="src/pages/about.html">Nosotros</a></li>
+                <li><a href="src/pages/contact.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Los mejores neumáticos para tu vehículo</h2>
+                <h3>Encuentra las mejores marcas y precios en Córdoba</h3>
+                <a href="src/pages/products.html" class="cta-button">Ver Neumáticos</a>
+                
+                <a href="src/pages/accessories.html" class="cta-button">Ver Accesorios</a>
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <h3>Neumáticos Destacados</h3>
+            <div class="product-grid" id="featured-tires">
+                <!-- Los productos se cargarán dinámicamente con JavaScript -->
+            </div>
+        </section>
+
+        <section class="featured-accessories">
+            <h3>Accesorios Destacados</h3>
+            <div class="product-grid" id="featured-accessories">
+                <!-- Los accesorios se cargarán dinámicamente con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <div id="cart-widget" class="cart-widget">
+        <div class="cart-icon">
+            🛒 <span id="cart-count">0</span>
+        </div>
+        <div class="cart-content">
+            <h3>Carrito de Compras</h3>
+            <div id="cart-items-widget"></div>
+            <div class="cart-total">
+                Total: <span id="cart-total">$0</span>
+            </div>
+            <button onclick="window.location.href='src/pages/cart.html'" class="view-cart-btn">Ver Carrito</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Neumáticos Córdoba - Todos los derechos reservados</p>
+    </footer>
+
+    <script src="src/js/main.js"></script>
+    <script src="src/js/cart-widget.js"></script>
+    <script src="src/js/hamburger.js"></script>
+</body>
+</html>

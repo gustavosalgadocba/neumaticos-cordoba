@@ -1,0 +1,75 @@
+/* Estilos para las páginas de estado de pago */
+.payment-status {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.status-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.status-container i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.status-container.success i {
+    color: #28a745;
+}
+
+.status-container.failure i {
+    color: #dc3545;
+}
+
+.status-container.pending i {
+    color: #ffc107;
+}
+
+.status-container h1 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.status-container p {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.status-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.status-actions .btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+} 

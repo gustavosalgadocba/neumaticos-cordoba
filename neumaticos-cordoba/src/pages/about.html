@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumáticos Córdoba - Nosotros</title>
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../images/logo.png" width="120px" height="70" class="logo-img" alt="Neumáticos Córdoba Logo">
+            </div>
+            <ul>
+                <li><a href="../../index.html">Inicio</a></li>
+                <li><a href="products.html">Neumáticos</a></li>
+                <li><a href="accessories.html">Accesorios</a></li>
+                <li><a href="about.html" class="active">Nosotros</a></li>
+                <li><a href="contact.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="about-section">            
+            <h2 class="section-title">Nuestra Historia</h2>
+            <p class="section-subtitle">De una simple idea entre amigos a una realidad en constante crecimiento</p>
+        
+            <div class="about-content">
+                <div class="history-section">
+                    <h3>Nuestros Inicios</h3>
+                    <div class="beginning-block">
+                        <h4>El Comienzo</h4>
+                        <p>En 2024, dos apasionados del mundo automotor y el emprendimiento identificaron una necesidad crucial en el mercado: neumáticos de calidad a precios accesibles.</p>
+                        <p>Tras meses de investigación y planificación, creamos una plataforma innovadora que conecta directamente a los fabricantes con los clientes, eliminando intermediarios y reduciendo costos significativamente.</p>
+                    </div>
+
+                    <div class="journey-block">
+                        <h4>Nuestro Viaje</h4>
+                        <h3>Crecimiento y Desarrollo</h3>
+                        <p>Lo que comenzó como un pequeño proyecto entre amigos se transformó rápidamente en un negocio en rapido crecimiento. Nuestro compromiso con la calidad y los precios justos nos ha permitido ganar la confianza de miles de clientes satisfechos.</p>
+                        
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <span class="stat-number">+100</span>
+                                <span class="stat-label">Clientes Satisfechos</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">+500</span>
+                                <span class="stat-label">Productos Vendidos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-block">
+                        <h4>Nuestro Compromiso</h4>
+                        <h3>Nuestra Misión</h3>
+                        <p>Queremos revolucionar la forma en que las personas compran neumáticos y accesorios para sus vehículos. Nuestro objetivo es hacer que la compra de estos productos sea más accesible, transparente y conveniente para todos.</p>
+                        <a href="products.html" class="cta-button">Ver Nuestros Productos</a>
+                    </div>
+                </div>
+
+                <div class="contact-section">
+                    <h3>¿Quieres ser parte de nuestra historia?</h3>
+                    <p>Estamos siempre buscando nuevas formas de crecer y mejorar. Si tienes alguna sugerencia o quieres trabajar con nosotros, no dudes en contactarnos.</p>
+                    
+                    <div class="contact-info">
+                        <h4>Contáctanos</h4>
+                        <p>Estamos aquí para ayudarte. No dudes en contactarnos por cualquiera de estos medios.</p>
+                        <div class="contact-methods">
+                            <a href="https://wa.me/+543517735389" target="_blank" class="contact-button whatsapp">
+                                <i class="fab fa-whatsapp"></i> WhatsApp: Comunicate con nosotros
+                            </a>
+                            <a href="mailto:agustinbritoscba1984@gmail.com" class="contact-button email">
+                                <i class="far fa-envelope"></i> Email: NeumaticosCordoba@gmail.com
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="cart-widget" class="cart-widget">
+        <div class="cart-icon">
+            🛒 <span id="cart-count">0</span>
+        </div>
+        <div class="cart-content">
+            <h3>Carrito de Compras</h3>
+            <div id="cart-items-widget"></div>
+            <div class="cart-total">
+                Total: <span id="cart-total">$0</span>
+            </div>
+            <button onclick="window.location.href='cart.html'" class="view-cart-btn">Ver Carrito</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Neumáticos Córdoba - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script src="../js/cart-widget.js"></script>
+    <script src="../js/hamburger.js"></script>
+</body>
+
+</html>
