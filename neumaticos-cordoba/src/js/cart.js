@@ -4,19 +4,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function formatPrice(price) {
-    // Convert price to number and ensure it's valid
     const numPrice = typeof price === 'string' ? 
         parseFloat(price.replace(/\./g, '').replace(',', '.')) : 
         parseFloat(price);
     
     if (isNaN(numPrice)) return '0,00';
     
-    // Format with Argentine format (dot for thousands, comma for decimals)
     return new Intl.NumberFormat('es-AR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
         useGrouping: true
     }).format(numPrice);
+}
+
+function getImagePath(imagePath) {
+    if (!imagePath) return '';
+    return imagePath.startsWith('src/') ? `../../${imagePath}` : `../../src/${imagePath}`;
 }
 
 function displayCartItems() {
@@ -32,15 +35,13 @@ function displayCartItems() {
     cartContainer.innerHTML = cart.map(item => {
         const itemPrice = parseFloat(String(item.price).replace(/\./g, '').replace(',', '.'));
         const itemTotal = itemPrice * item.quantity;
-        
-        // Ajustar la ruta de la imagen para la página del carrito
         const imagePath = getImagePath(item.image);
         
         return `
             <div class="cart-item" data-id="${item.id}">
                 <img src="${imagePath}" alt="${item.name}" class="cart-item-image">
                 <div class="item-details">
-                    <h3 class="item-name">${item.name}</h3>
+                    <h3 class="item-name">${item.brand ? `${item.brand} ${item.name}` : item.name}</h3>
                     <p class="item-price">Precio: $${formatPrice(itemPrice)}</p>
                     <p class="item-subtotal">Subtotal: $${formatPrice(itemTotal)}</p>
                 </div>
@@ -60,7 +61,7 @@ function displayCartItems() {
 function setupEventListeners() {
     const cartContainer = document.getElementById('cart-items');
     
-    cartContainer.addEventListener('click', (e) => {
+    cartContainer.addEventListener('click', async (e) => {
         const button = e.target;
         if (!button.classList.contains('quantity-btn') && !button.classList.contains('remove-item')) return;
         
@@ -72,13 +73,13 @@ function setupEventListeners() {
 
         switch (action) {
             case 'increase':
-                updateQuantity(itemId, 1);
+                await updateQuantity(itemId, 1);
                 break;
             case 'decrease':
-                updateQuantity(itemId, -1);
+                await updateQuantity(itemId, -1);
                 break;
             case 'remove':
-                removeItem(itemId);
+                await removeItem(itemId);
                 break;
         }
     });
@@ -89,29 +90,35 @@ function setupEventListeners() {
     }
 }
 
-function updateQuantity(itemId, change) {
+async function updateQuantity(itemId, change) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const itemIndex = cart.findIndex(item => item.id.toString() === itemId.toString());
+    const item = cart.find(item => item.id.toString() === itemId.toString());
     
-    if (itemIndex !== -1) {
-        cart[itemIndex].quantity += change;
-        
-        if (cart[itemIndex].quantity <= 0) {
-            cart = cart.filter(item => item.id.toString() !== itemId.toString());
-        }
-        
+    if (item) {
+        item.quantity = Math.max(1, item.quantity + change);
         localStorage.setItem('cart', JSON.stringify(cart));
         displayCartItems();
-        updateCartWidget(); // Si tienes una función que actualiza el widget del carrito
+        
+        // Actualizar el botón de Mercado Pago
+        await window.mercadoPagoHandler.processPayment(cart);
     }
 }
 
-function removeItem(itemId) {
+async function removeItem(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart = cart.filter(item => item.id.toString() !== itemId.toString());
     localStorage.setItem('cart', JSON.stringify(cart));
     displayCartItems();
-    updateCartWidget(); // Si tienes una función que actualiza el widget del carrito
+    
+    // Actualizar el botón de Mercado Pago
+    if (cart.length > 0) {
+        await window.mercadoPagoHandler.processPayment(cart);
+    } else {
+        const mpContainer = document.getElementById('mercadopago-wallet');
+        if (mpContainer) {
+            mpContainer.innerHTML = '';
+        }
+    }
 }
 
 function calculateTotal(cart) {
@@ -182,16 +189,6 @@ function updateCartWidget() {
             </div>
         `;
     }).join('');
-}
-
-// Función para obtener la ruta correcta de la imagen
-function getImagePath(imagePath) {
-    // Si la ruta ya comienza con /src/, la dejamos como está
-    if (imagePath.startsWith('/src/')) {
-        return imagePath;
-    }
-    // Si no, agregamos el prefijo /src/
-    return `/src/${imagePath}`;
 }
 
 // Función para actualizar la visualización del carrito
