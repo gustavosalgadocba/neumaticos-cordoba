@@ -18,8 +18,18 @@ function formatPrice(price) {
 }
 
 function getImagePath(imagePath) {
-    if (!imagePath) return '';
-    return imagePath.startsWith('src/') ? `../../${imagePath}` : `../../src/${imagePath}`;
+    if (!imagePath) return '../images/default-product.jpg';
+    
+    // Normalizar la ruta de la imagen
+    if (imagePath.startsWith('src/')) {
+        return `../../${imagePath}`;
+    } else if (imagePath.startsWith('../')) {
+        return `../${imagePath}`;
+    } else if (imagePath.startsWith('./')) {
+        return `../../src/${imagePath.substring(2)}`;
+    } else {
+        return `../../src/${imagePath}`;
+    }
 }
 
 function displayCartItems() {
@@ -27,7 +37,7 @@ function displayCartItems() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     if (cart.length === 0) {
-        cartContainer.innerHTML = '<p class="empty-cart">Tu carrito está vacío</p>';
+        cartContainer.innerHTML = '<div class="empty-cart">Tu carrito está vacío</div>';
         updateCartTotal(0);
         return;
     }
@@ -99,8 +109,19 @@ async function updateQuantity(itemId, change) {
         localStorage.setItem('cart', JSON.stringify(cart));
         displayCartItems();
         
-        // Actualizar el botón de Mercado Pago
-        await window.mercadoPagoHandler.processPayment(cart);
+        // Limpiar el contenedor de Mercado Pago
+        const mpContainer = document.getElementById('mercadopago-wallet');
+        if (mpContainer) {
+            mpContainer.innerHTML = '';
+        }
+        
+        // Mostrar el botón de pago nuevamente
+        const paymentButton = document.getElementById('proceed-to-payment');
+        if (paymentButton) {
+            paymentButton.style.display = 'block';
+            paymentButton.disabled = false;
+            paymentButton.textContent = 'Proceder al Pago';
+        }
     }
 }
 
@@ -110,13 +131,21 @@ async function removeItem(itemId) {
     localStorage.setItem('cart', JSON.stringify(cart));
     displayCartItems();
     
-    // Actualizar el botón de Mercado Pago
-    if (cart.length > 0) {
-        await window.mercadoPagoHandler.processPayment(cart);
-    } else {
-        const mpContainer = document.getElementById('mercadopago-wallet');
-        if (mpContainer) {
-            mpContainer.innerHTML = '';
+    // Limpiar el contenedor de Mercado Pago
+    const mpContainer = document.getElementById('mercadopago-wallet');
+    if (mpContainer) {
+        mpContainer.innerHTML = '';
+    }
+    
+    // Mostrar el botón de pago nuevamente si hay items en el carrito
+    const paymentButton = document.getElementById('proceed-to-payment');
+    if (paymentButton) {
+        if (cart.length > 0) {
+            paymentButton.style.display = 'block';
+            paymentButton.disabled = false;
+            paymentButton.textContent = 'Proceder al Pago';
+        } else {
+            paymentButton.style.display = 'none';
         }
     }
 }
@@ -199,7 +228,7 @@ function updateCartDisplay() {
     if (!cartContainer) return;
 
     if (cart.length === 0) {
-        cartContainer.innerHTML = '<p class="empty-cart">No hay productos en el carrito</p>';
+        cartContainer.innerHTML = '<div class="empty-cart">No hay productos en el carrito</div>';
         updateTotals();
         return;
     }

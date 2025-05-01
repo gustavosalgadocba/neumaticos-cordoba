@@ -9,15 +9,21 @@
 </head>
 <body>
     <header>
-        <nav class="navbar">
+        <nav>
             <div class="logo">
                 <a href="../../index.html">
-                    <img src="../images/logo.png" alt="Neumáticos Córdoba">
+                    <img src="../images/logo.png" width="120px" height="70" class="logo-img" alt="Neumáticos Córdoba Logo">
                 </a>
             </div>
-            <ul class="nav-links">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul>
                 <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="products.html">Productos</a></li>
+                <li><a href="products.html">Neumáticos</a></li>
+                <li><a href="accessories.html">Accesorios</a></li>
                 <li><a href="about.html">Nosotros</a></li>
                 <li><a href="contact.html">Contacto</a></li>
             </ul>
@@ -25,37 +31,39 @@
     </header>
 
     <main>
-        <h1>Tu Carrito de Compras</h1>
-        <div id="cart-items"></div>
-        
-        <div class="cart-summary">
-            <div class="summary-item">
-                <span>Subtotal:</span>
-                <span id="subtotal-amount">$0,00</span>
-            </div>
-            <div class="summary-item total">
-                <span>Total:</span>
-                <span id="total-amount">$0,00</span>
+        <div class="container">
+            <h1>Tu Carrito de Compras</h1>
+            
+            <div class="cart-container">
+                <div id="cart-items"></div>
+                
+                <div class="cart-summary">
+                    <div class="summary-item">
+                        <span>Subtotal:</span>
+                        <span id="subtotal-amount">$0,00</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Total:</span>
+                        <span id="total-amount">$0,00</span>
+                    </div>
+                    <button id="proceed-to-payment" class="payment-button">Proceder al Pago</button>
+                </div>
+
+                <!-- Contenedor para el botón de Mercado Pago -->
+                <div id="mercadopago-wallet"></div>
             </div>
         </div>
-
-        <!-- Contenedor para el botón de Mercado Pago -->
-        <div id="mercadopago-wallet"></div>
     </main>
 
     <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p><i class="fas fa-phone"></i> (123) 456-7890</p>
-                <p><i class="fas fa-envelope"></i> info@neumaticoscordoba.com</p>
-            </div>
+        <div class="footer-content">            
             <div class="footer-section">
                 <h3>Síguenos</h3>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook"></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
+                    
                 </div>
             </div>
         </div>
@@ -67,12 +75,45 @@
     <!-- Scripts -->
     <script src="../js/cart.js"></script>
     <script src="../js/mercadopago-config.js"></script>
+    <script src="../js/hamburger.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            // Inicializar Mercado Pago
             await window.mercadoPagoHandler.initMercadoPago();
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (cart.length > 0) {
-                await window.mercadoPagoHandler.processPayment(cart);
+
+            // Manejar el botón de proceder al pago
+            const paymentButton = document.getElementById('proceed-to-payment');
+            if (paymentButton) {
+                paymentButton.addEventListener('click', async () => {
+                    try {
+                        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                        if (cart.length === 0) {
+                            alert('El carrito está vacío');
+                            return;
+                        }
+                        
+                        paymentButton.disabled = true;
+                        paymentButton.textContent = 'Cargando...';
+                        
+                        await window.mercadoPagoHandler.processPayment(cart);
+                        
+                        // Ocultar el botón después de cargar el widget de Mercado Pago
+                        paymentButton.style.display = 'none';
+                    } catch (error) {
+                        console.error('Error al procesar el pago:', error);
+                        paymentButton.disabled = false;
+                        paymentButton.textContent = 'Proceder al Pago';
+                        
+                        // Mostrar mensaje de error
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'error-message';
+                        errorDiv.innerHTML = `
+                            <p>Hubo un error al cargar el método de pago.</p>
+                            <button onclick="location.reload()">Reintentar</button>
+                        `;
+                        document.querySelector('.cart-summary').appendChild(errorDiv);
+                    }
+                });
             }
         });
     </script>

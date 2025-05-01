@@ -7,7 +7,7 @@ const mercadoPagoConfig = {
 // Función para obtener la Public Key del servidor
 async function getPublicKey() {
     try {
-        const response = await fetch('/config');
+        const response = await fetch('http://localhost:3000/config');
         if (!response.ok) {
             throw new Error('Error al obtener la configuración');
         }
@@ -80,10 +80,10 @@ async function processPayment(cart) {
             currency_id: "ARS"
         }));
 
-        console.log('Items formateados:', items);
+        console.log('Items a procesar:', items);
 
         // Crear preferencia de pago
-        const response = await fetch('/create-preference', {
+        const response = await fetch('http://localhost:3000/create-preference', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ async function processPayment(cart) {
         }
 
         const preference = await response.json();
-        console.log('Preferencia creada:', preference);
+        console.log('Preferencia recibida:', preference);
 
         // Limpiar contenedor anterior si existe
         const container = document.getElementById('mercadopago-wallet');
@@ -116,10 +116,21 @@ async function processPayment(cart) {
             callbacks: {
                 onError: (error) => {
                     console.error('Error en el componente de Mercado Pago:', error);
-                    alert('Hubo un error al procesar el pago. Por favor, intente nuevamente.');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    errorDiv.innerHTML = `
+                        <p>Hubo un error al procesar el pago. Por favor, intente nuevamente.</p>
+                        <button onclick="location.reload()">Reintentar</button>
+                    `;
+                    container.appendChild(errorDiv);
                 },
                 onReady: () => {
                     console.log('Botón de pago listo');
+                    // Ocultar el botón de "Proceder al Pago"
+                    const paymentButton = document.getElementById('proceed-to-payment');
+                    if (paymentButton) {
+                        paymentButton.style.display = 'none';
+                    }
                 }
             }
         });
@@ -131,12 +142,16 @@ async function processPayment(cart) {
         if (container) {
             container.innerHTML = `
                 <div class="error-message">
-                    <p>Hubo un error al cargar el método de pago.</p>
-                    <button onclick="window.mercadoPagoHandler.processPayment(${JSON.stringify(cart)})">
-                        Reintentar
-                    </button>
+                    <p>Hubo un error al cargar el método de pago: ${error.message}</p>
+                    <button onclick="location.reload()">Reintentar</button>
                 </div>
             `;
+        }
+        // Mostrar el botón de pago nuevamente en caso de error
+        const paymentButton = document.getElementById('proceed-to-payment');
+        if (paymentButton) {
+            paymentButton.style.display = 'block';
+            paymentButton.disabled = false;
         }
         throw error;
     }

@@ -152,10 +152,10 @@ function createProductCard(product) {
 
     return `
         <div class="product-card">
-            <img src="${imagePath}" alt="${product.brand} ${product.model}">
+            <img src="${imagePath}" alt="${product.brand} ${product.name}">
             <div class="product-info">
                 <h3>${product.brand}</h3>
-                <p class="product-model">${product.model}</p>
+                <p class="product-model">${product.name}</p>
                 <p class="product-size">${product.size}</p>
                 <p class="product-price">$${product.price.toLocaleString()}</p>
                 <button class="details-button" onclick="showProductDetails('${product.id}')">Ver Detalles</button>
@@ -183,18 +183,24 @@ function showProductDetails(productId) {
     document.getElementById('modal-image').src = imagePath;
     document.getElementById('modal-title').textContent = product.brand + ' ' + product.name;
     document.getElementById('modal-brand').textContent = product.brand;
-    document.getElementById('modal-model').textContent = product.model || product.name;
+    document.getElementById('modal-model').textContent = product.name;
     document.getElementById('modal-size').textContent = product.size;
     document.getElementById('modal-category').textContent = "neumáticos";
     document.getElementById('modal-price').textContent = `$${product.price.toLocaleString()}`;
     document.getElementById('modal-stock').textContent = `${product.stock} unidades disponibles`;
     document.getElementById('modal-description').textContent = product.description;
+    
+    // Establecer el máximo del input de cantidad según el stock disponible
+    const quantityInput = document.getElementById('quantity');
+    quantityInput.max = product.stock;
+    quantityInput.value = 1;
+    document.getElementById('stock-available').textContent = `Máximo: ${product.stock} unidades`;
 
     // Configurar el botón de agregar al carrito
     const addToCartBtn = modal.querySelector('.add-to-cart-btn');
     addToCartBtn.onclick = () => {
         const quantity = parseInt(document.getElementById('quantity').value);
-        addToCart(product);
+        addToCart(product, quantity);
         modal.style.display = 'none';
     };
 
@@ -202,12 +208,34 @@ function showProductDetails(productId) {
 }
 
 // Función para agregar al carrito
-function addToCart(product) {
+function addToCart(product, quantity = 1) {
+    // Verificar que quantity sea un número válido
+    quantity = parseInt(quantity) || 1;
+    
+    // Obtener el producto original para verificar el stock disponible
+    const originalProduct = products.find(p => p.id === product.id);
+    if (!originalProduct) {
+        showNotification('Producto no encontrado');
+        return;
+    }
+    
+    // Verificar el stock disponible
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingProduct = cart.find(item => item.id === product.id);
     
+    // Calcular la cantidad total que tendría el producto en el carrito
+    const currentQuantity = existingProduct ? existingProduct.quantity : 0;
+    const newTotalQuantity = currentQuantity + quantity;
+    
+    // Verificar si hay suficiente stock
+    if (newTotalQuantity > originalProduct.stock) {
+        showNotification(`Solo hay ${originalProduct.stock} unidades disponibles`);
+        return;
+    }
+    
+    // Actualizar el carrito
     if (existingProduct) {
-        existingProduct.quantity += 1;
+        existingProduct.quantity = newTotalQuantity;
     } else {
         // Asegurarse de que el precio se guarde como string con el formato correcto
         const formattedPrice = String(product.price).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -218,12 +246,13 @@ function addToCart(product) {
             brand: product.brand,
             price: formattedPrice,
             image: product.image, // Guardar la ruta relativa base
-            quantity: 1
+            quantity: quantity
         });
     }
     
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartWidget();
+    showNotification(`${quantity} ${product.name} agregado(s) al carrito`);
 }
 
 function updateCartWidget() {
@@ -339,7 +368,14 @@ window.addEventListener('click', (event) => {
 // Manejo de cantidad
 document.getElementById('increase').addEventListener('click', () => {
     const input = document.getElementById('quantity');
-    input.value = parseInt(input.value) + 1;
+    const currentValue = parseInt(input.value);
+    const maxValue = parseInt(input.max);
+    
+    if (currentValue < maxValue) {
+        input.value = currentValue + 1;
+    } else {
+        showNotification(`Solo hay ${maxValue} unidades disponibles`);
+    }
 });
 
 document.getElementById('decrease').addEventListener('click', () => {
@@ -347,6 +383,25 @@ document.getElementById('decrease').addEventListener('click', () => {
     if (parseInt(input.value) > 1) {
         input.value = parseInt(input.value) - 1;
     }
+});
+
+// Validar el input de cantidad cuando el usuario escribe directamente
+document.getElementById('quantity').addEventListener('change', (e) => {
+    const input = e.target;
+    let value = parseInt(input.value);
+    const max = parseInt(input.max);
+    
+    // Asegurarse de que el valor sea un número válido
+    if (isNaN(value) || value < 1) {
+        value = 1;
+    } 
+    // Asegurarse de que no exceda el stock disponible
+    else if (value > max) {
+        value = max;
+        showNotification(`Solo hay ${max} unidades disponibles`);
+    }
+    
+    input.value = value;
 });
 
 // Asegurarse de que el carrito esté visible

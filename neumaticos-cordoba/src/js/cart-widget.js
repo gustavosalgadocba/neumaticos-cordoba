@@ -67,7 +67,7 @@ function updateCartDisplay() {
     if (!cartItemsContainer || !cartTotal) return;
 
     if (cart.length === 0) {
-        cartItemsContainer.innerHTML = '<p class="empty-cart">No hay productos en el carrito</p>';
+        cartItemsContainer.innerHTML = '<div class="empty-cart">No hay productos en el carrito</div>';
         cartTotal.textContent = '$0,00';
         return;
     }
