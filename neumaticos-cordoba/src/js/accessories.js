@@ -4,7 +4,7 @@ const accessories = [
         name: "Estéreo Pioneer MVH-S215BT",
         category: "audio",
         price: 45000,
-        image: "../images/accessories/stereo-pioneer.jpg",
+        image: "../images/accessories/estereo-pioneer.jpg",
         description: "Estéreo con Bluetooth, USB y control remoto",
         stock: 5
     },
